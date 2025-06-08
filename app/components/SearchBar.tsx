@@ -2,14 +2,19 @@ import React from "react";
 import { Image, StyleSheet, TextInput, View } from "react-native";
 import searchIcon from "../../assets/icons/searchIcon.png";
 
-const SearchBar = ({ onPress, placeholder }: SearchBarProps) => {
+const SearchBar = ({
+  onPress,
+  placeholder,
+  value,
+  onChangeText,
+}: SearchBarProps) => {
   return (
     <View style={styles.searchBar}>
       <Image source={searchIcon} style={styles.searchIcon} />
       <TextInput
         placeholder={placeholder}
-        value=""
-        onChangeText={() => {}}
+        value={value}
+        onChangeText={onChangeText}
         onPress={onPress}
         style={styles.searchField}
       />
