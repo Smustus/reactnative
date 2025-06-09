@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../assets/images/logo.jpg";
 import SearchBar from "../components/SearchBar";
 
@@ -29,36 +30,40 @@ export default function Index() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={{
-          flex: 1,
-          width: "100%",
-        }}
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        <Image
-          source={logo}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <ScrollView
           style={{
-            height: 150,
-            width: 150,
+            flex: 1,
+            width: "100%",
           }}
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={logo}
+            style={{
+              height: 150,
+              width: 150,
+            }}
+          />
+        </ScrollView>
+        <SearchBar
+          /*  onPress={() => router.push("/search")} */
+          placeholder="Search for a list"
+          value={""}
+          onChangeText={() => {}}
         />
-      </ScrollView>
-      <SearchBar
-        /*  onPress={() => router.push("/search")} */
-        placeholder="Search for a list"
-      />
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-      <Link href="/onboarding" asChild>
-        <TouchableOpacity>
-          <Text style={styles.link}>Onboarding</Text>
-        </TouchableOpacity>
-      </Link>
-    </View>
+        <Text>Edit app/index.tsx to edit this screen.</Text>
+        <Link href="/onboarding" asChild>
+          <TouchableOpacity>
+            <Text style={styles.link}>Onboarding</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+    </SafeAreaView>
   );
 }

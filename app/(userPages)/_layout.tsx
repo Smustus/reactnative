@@ -39,7 +39,7 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="lists/[list]"
+        name="lists"
         options={{
           title: "Lists",
           headerShown: false,
