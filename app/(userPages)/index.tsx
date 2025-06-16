@@ -1,15 +1,13 @@
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../assets/images/logo.jpg";
-import SearchBar from "../components/SearchBar";
 
 const styles = StyleSheet.create({
   container: {
@@ -31,39 +29,45 @@ export default function Index() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <ScrollView
+      {/*       <View style={styles.container}> */}
+      <ScrollView
+        style={{
+          flex: 1,
+          width: "100%",
+        }}
+        contentContainerStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableOpacity onPress={() => router.push("/login")}>
+          <Text>Login</Text>
+        </TouchableOpacity>
+
+        {/*   <ScrollView
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          width: "100%",
+        }}
+        contentContainerStyle={{
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
+        showsVerticalScrollIndicator={false}
+      > */}
+        <Image
+          source={logo}
           style={{
-            flex: 1,
-            width: "100%",
+            height: 150,
+            width: 150,
           }}
-          contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          showsVerticalScrollIndicator={false}
-        >
-          <Image
-            source={logo}
-            style={{
-              height: 150,
-              width: 150,
-            }}
-          />
-        </ScrollView>
-        <SearchBar
-          /*  onPress={() => router.push("/search")} */
-          placeholder="Search for a list"
-          value={""}
-          onChangeText={() => {}}
         />
         <Text>Edit app/index.tsx to edit this screen.</Text>
-        <Link href="/onboarding" asChild>
-          <TouchableOpacity>
-            <Text style={styles.link}>Onboarding</Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
+      </ScrollView>
+
+      {/*   </View> */}
     </SafeAreaView>
   );
 }
