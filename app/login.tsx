@@ -1,6 +1,8 @@
+import { auth } from "@/firebase/FirebaseConfig";
 import { Link } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "./components/Input";
 
@@ -32,6 +34,15 @@ const Login = () => {
       setPasswordError("");
     }
   };
+
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.log("Error during login: " + error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Login</Text>
@@ -54,6 +65,7 @@ const Login = () => {
         iconName="lock-closed"
         error={passwordError}
       />
+      <Button title="Login" onPress={handleLogin} />
       <Link href={"/signup"} asChild>
         <TouchableOpacity>
           <Text>Missing an account? Click here to signup!</Text>
