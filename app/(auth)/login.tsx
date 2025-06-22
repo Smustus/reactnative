@@ -3,7 +3,7 @@ import { validateEmail } from "@/utils/validateEmail";
 import { Link } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../../components/Input";
 
@@ -65,16 +65,27 @@ const Login = () => {
         iconName="lock-closed"
         error={passwordError}
       />
-      <Button
-        title={isLoading ? "Signing In..." : "Sign In"}
-        onPress={handleLogin}
+      <Link
+        href={"/"}
         disabled={isLoading}
-      />
-      <Link href={"/signup"} disabled={isLoading} asChild>
+        onPress={handleLogin}
+        style={styles.button}
+        asChild
+      >
         <TouchableOpacity>
-          <Text>Missing an account? Click here to sign up!</Text>
+          <Text>{isLoading ? "Signing In..." : "Sign In"}</Text>
         </TouchableOpacity>
       </Link>
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>Missing an account?</Text>
+        <Link href={"/signup"} disabled={isLoading} asChild>
+          <TouchableOpacity>
+            <Text style={[styles.linkText, { color: "blue" }]}>
+              Click here to sign up
+            </Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
     </SafeAreaView>
   );
 };
@@ -91,5 +102,26 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: 600,
+  },
+  button: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    backgroundColor: "lightblue",
+  },
+  textContainer: {
+    marginVertical: 10,
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 14,
+    padding: 2,
+    textAlign: "center",
+  },
+  linkText: {
+    fontSize: 15,
+    padding: 2,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

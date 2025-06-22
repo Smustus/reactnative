@@ -1,5 +1,7 @@
+import { auth } from "@/firebase/FirebaseConfig";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../../assets/images/logo.jpg";
@@ -32,10 +34,10 @@ export default function Index() {
     if (initializing) setInitializing(false);
   }
 
-  /* useEffect(() => {
-    const subscriber = getAuth().onAuthStateChanged(handleAuthStateChanged);
+  useEffect(() => {
+    const subscriber = onAuthStateChanged(auth, handleAuthStateChanged);
     return subscriber;
-  }, []); */
+  }, []);
 
   /*  if (initializing) return null; */
 
@@ -61,7 +63,7 @@ export default function Index() {
           alignItems: "center",
         }}
         showsVerticalScrollIndicator={false}
-      > */}
+      >  */}
       <View style={styles.container}>
         <TouchableOpacity onPress={() => router.push("/login")}>
           <Text>Login</Text>
@@ -77,7 +79,7 @@ export default function Index() {
         <Text>HOME SCREEN</Text>
         <Text>Edit app/index.tsx to edit this screen.</Text>
       </View>
-      {/* </ScrollView> */}
+      {/*  </ScrollView> */}
     </SafeAreaView>
   );
 }
