@@ -1,13 +1,6 @@
-import { FirebaseAuthTypes, getAuth } from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../../assets/images/logo.jpg";
 
@@ -31,32 +24,34 @@ export default function Index() {
 
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   // Handle user state changes
-  function handleAuthStateChanged(user: FirebaseAuthTypes.User | null) {
+  function handleAuthStateChanged(user: User | null) {
     setUser(user);
     if (initializing) setInitializing(false);
   }
 
-  useEffect(() => {
+  /* useEffect(() => {
     const subscriber = getAuth().onAuthStateChanged(handleAuthStateChanged);
     return subscriber;
-  }, []);
+  }, []); */
 
-  if (initializing) return null;
+  /*  if (initializing) return null; */
 
-  if (!user) {
+  /* if (!user) {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <Text>Login</Text>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <Text>Home Screen</Text>
       </SafeAreaView>
     );
-  }
+  } */
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
+      {/* <ScrollView
         style={{
           flex: 1,
           width: "100%",
@@ -66,7 +61,8 @@ export default function Index() {
           alignItems: "center",
         }}
         showsVerticalScrollIndicator={false}
-      >
+      > */}
+      <View style={styles.container}>
         <TouchableOpacity onPress={() => router.push("/login")}>
           <Text>Login</Text>
         </TouchableOpacity>
@@ -78,8 +74,10 @@ export default function Index() {
             width: 150,
           }}
         />
+        <Text>HOME SCREEN</Text>
         <Text>Edit app/index.tsx to edit this screen.</Text>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 }

@@ -1,27 +1,22 @@
-import { Ionicons } from "@expo/vector-icons";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { Stack } from "expo-router";
 import React from "react";
 
 export default function RootLayout() {
-  const TabIcon = ({ focused, size, color, name }: TabIconProps) => {
-    return (
-      <Ionicons
-        name={focused ? name : `${name}-outline`}
-        size={size}
-        color={color}
-      />
-    );
-  };
+  const { user } = useAuth();
+  const isLoggedIn = user !== null ? true : false;
 
   return (
-    <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="lists/[list]"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+    <AuthProvider>
+      <Stack>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+        </Stack.Protected>
+      </Stack>
+    </AuthProvider>
   );
 }

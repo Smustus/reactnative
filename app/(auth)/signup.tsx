@@ -1,10 +1,11 @@
+import { auth } from "@/firebase/FirebaseConfig";
 import { validateEmail } from "@/utils/validateEmail";
-import { getAuth } from "@react-native-firebase/auth";
 import { Link } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Input from "../components/Input";
+import Input from "../../components/Input";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -34,7 +35,7 @@ const Signup = () => {
   const handleSignup = async () => {
     setIsLoading(true);
     try {
-      await getAuth().createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       console.log("Error during signup: " + error);
       if (error.code === "auth/email-already-in-use") {
@@ -51,7 +52,7 @@ const Signup = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Signup</Text>
+      <Text style={styles.header}>Sign up</Text>
       <Input
         label="Email Address"
         placeholder="Enter your email"
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
   },
   header: {

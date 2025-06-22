@@ -1,9 +1,11 @@
-import { getAuth } from "@react-native-firebase/auth";
+import { auth } from "@/firebase/FirebaseConfig";
+import { validateEmail } from "@/utils/validateEmail";
 import { Link } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Input from "../components/Input";
+import Input from "../../components/Input";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,11 +13,6 @@ const Login = () => {
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
@@ -38,7 +35,7 @@ const Login = () => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      await getAuth().signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.log("Error during login: " + error);
     } finally {
@@ -88,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
   },
   header: {

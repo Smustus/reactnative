@@ -13,7 +13,7 @@ const TabIcon = ({ focused, size, color, name }: TabIconProps) => {
   );
 };
 
-const Layout = () => {
+const TabsLayout = () => {
   return (
     <Tabs
       screenOptions={{
@@ -67,6 +67,6 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default TabsLayout;
 
 const styles = StyleSheet.create({});

@@ -1,51 +1,20 @@
-import { FirebaseAuthTypes, getAuth } from "@react-native-firebase/auth";
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { auth } from "@/firebase/FirebaseConfig";
+import { onAuthStateChanged, User } from "firebase/auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface AuthContextType {
-  user: FirebaseAuthTypes.User | null;
-  loading: boolean;
-}
+const AuthContext = createContext<{ user: User | null }>({ user: null });
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+export const useAuth = () => useContext(AuthContext);
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-  const [loading, setLoading] = useState(true); // Tracks initial auth state loading
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const subscriber = getAuth().onAuthStateChanged((firebaseUser: any) => {
-      setUser(firebaseUser);
-      if (loading) {
-        setLoading(false);
-      }
-    });
-
-    // Unsubscribe from listener when the component unmounts
-    return subscriber;
-  }, [loading]); // Only re-run if loading state changes
+    const unsubscribe = onAuthStateChanged(auth, setUser);
+    return unsubscribe;
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
-};
-
-// Custom hook to consume the AuthContext
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
