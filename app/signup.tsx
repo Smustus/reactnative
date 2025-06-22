@@ -1,19 +1,17 @@
+import { validateEmail } from "@/utils/validateEmail";
+import { getAuth } from "@react-native-firebase/auth";
 import { Link } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Input from "./components/Input";
+import Input from "../components/Input";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
-
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailChange = (text: string) => {
     setEmail(text);
@@ -32,6 +30,25 @@ const Signup = () => {
       setPasswordError("");
     }
   };
+
+  const handleSignup = async () => {
+    setIsLoading(true);
+    try {
+      await getAuth().createUserWithEmailAndPassword(email, password);
+    } catch (error: any) {
+      console.log("Error during signup: " + error);
+      if (error.code === "auth/email-already-in-use") {
+        console.log("That email address is already in use!");
+      }
+
+      if (error.code === "auth/invalid-email") {
+        console.log("That email address is invalid!");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Signup</Text>
@@ -54,9 +71,13 @@ const Signup = () => {
         iconName="lock-closed"
         error={passwordError}
       />
+      <Button
+        title={isLoading ? "Signing Up..." : "Sign Up"}
+        onPress={handleSignup}
+      />
       <Link href={"/login"} asChild>
         <TouchableOpacity>
-          <Text>Already have an account? Click here to signin!</Text>
+          <Text>Already have an account? Click here to sign in!</Text>
         </TouchableOpacity>
       </Link>
     </SafeAreaView>

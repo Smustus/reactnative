@@ -1,5 +1,6 @@
+import { FirebaseAuthTypes, getAuth } from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import logo from "../../assets/images/logo.jpg";
+import logo from "../../../assets/images/logo.jpg";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,9 +29,33 @@ const styles = StyleSheet.create({
 export default function Index() {
   const router = useRouter();
 
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+
+  // Handle user state changes
+  function handleAuthStateChanged(user: FirebaseAuthTypes.User | null) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = getAuth().onAuthStateChanged(handleAuthStateChanged);
+    return subscriber;
+  }, []);
+
+  if (initializing) return null;
+
+  if (!user) {
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <Text>Login</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/*       <View style={styles.container}> */}
       <ScrollView
         style={{
           flex: 1,
@@ -46,18 +71,6 @@ export default function Index() {
           <Text>Login</Text>
         </TouchableOpacity>
 
-        {/*   <ScrollView
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          width: "100%",
-        }}
-        contentContainerStyle={{
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-        showsVerticalScrollIndicator={false}
-      > */}
         <Image
           source={logo}
           style={{
@@ -67,8 +80,6 @@ export default function Index() {
         />
         <Text>Edit app/index.tsx to edit this screen.</Text>
       </ScrollView>
-
-      {/*   </View> */}
     </SafeAreaView>
   );
 }

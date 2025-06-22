@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
+import React from "react";
 
 export default function RootLayout() {
   const TabIcon = ({ focused, size, color, name }: TabIconProps) => {
@@ -14,7 +15,7 @@ export default function RootLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="(userPages)" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen
         name="lists/[list]"
         options={{

@@ -1,3 +1,4 @@
+import SearchBar from "@/components/SearchBar";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -8,7 +9,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SearchBar from "../components/SearchBar";
 
 const savedLists = [
   { id: "firstlist", title: "My First List" },

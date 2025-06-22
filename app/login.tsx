@@ -1,16 +1,16 @@
-import { auth } from "@/firebase/FirebaseConfig";
+import { getAuth } from "@react-native-firebase/auth";
 import { Link } from "expo-router";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Input from "./components/Input";
+import Input from "../components/Input";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,10 +36,13 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await getAuth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       console.log("Error during login: " + error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,10 +68,14 @@ const Login = () => {
         iconName="lock-closed"
         error={passwordError}
       />
-      <Button title="Login" onPress={handleLogin} />
-      <Link href={"/signup"} asChild>
+      <Button
+        title={isLoading ? "Signing In..." : "Sign In"}
+        onPress={handleLogin}
+        disabled={isLoading}
+      />
+      <Link href={"/signup"} disabled={isLoading} asChild>
         <TouchableOpacity>
-          <Text>Missing an account? Click here to signup!</Text>
+          <Text>Missing an account? Click here to sign up!</Text>
         </TouchableOpacity>
       </Link>
     </SafeAreaView>

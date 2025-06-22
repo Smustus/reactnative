@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, TextInput, View } from "react-native";
-import searchIcon from "../../assets/icons/searchIcon.png";
+import searchIcon from "../assets/icons/searchIcon.png";
 
 const SearchBar = ({
   onPress,
