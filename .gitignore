@@ -39,3 +39,4 @@ yarn-error.*
 app-example
 firebase/FirebaseConfig.ts
 google-services.json
+android/app/google-services.json
