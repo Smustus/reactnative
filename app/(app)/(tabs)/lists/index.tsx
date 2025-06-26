@@ -38,7 +38,10 @@ const Lists = () => {
         <FlatList
           data={filteredLists}
           renderItem={({ item }) => (
-            <Link href={`/lists/${item.id}`} asChild>
+            <Link
+              href={{ pathname: "/lists/[list]", params: { list: item.title } }}
+              asChild
+            >
               <TouchableOpacity style={styles.listItem}>
                 <Text style={styles.listTitle}>{item.title}</Text>
               </TouchableOpacity>
