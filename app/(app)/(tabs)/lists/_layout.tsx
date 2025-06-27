@@ -2,10 +2,15 @@ import { Stack } from "expo-router";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-const ListLayout = () => {
-  return <Stack />;
+const Layout = () => {
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="[list]" options={{ headerShown: true }} />
+    </Stack>
+  );
 };
 
-export default ListLayout;
+export default Layout;
 
 const styles = StyleSheet.create({});
