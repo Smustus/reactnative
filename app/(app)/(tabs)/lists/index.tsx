@@ -1,4 +1,5 @@
 import SearchBar from "@/components/SearchBar";
+import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -27,14 +28,17 @@ const Lists = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <SearchBar
-          /*  onPress={() => router.push("/search")} */
           placeholder="Search for a list"
           value={searchQuery}
-          /*  onChangeText={(text: string) => setSearchQuery(text)} */
           onChangeText={setSearchQuery}
         />
         <Text style={styles.heading}>Saved Lists</Text>
-
+        <Link href={"/lists/add"} style={styles.button} asChild>
+          <TouchableOpacity>
+            <Text style={styles.buttonText}>Add list</Text>
+            <Ionicons name="add-circle-outline" size={24} />
+          </TouchableOpacity>
+        </Link>
         <FlatList
           data={filteredLists}
           renderItem={({ item }) => (
@@ -92,5 +96,17 @@ const styles = StyleSheet.create({
   emptyText: {
     fontStyle: "italic",
     color: "#888",
+  },
+  button: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 15,
+    backgroundColor: "lightblue",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.2)",
+  },
+  buttonText: {
+    fontWeight: "bold",
   },
 });

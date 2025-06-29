@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 15,
     width: "100%",
+    minWidth: 300,
   },
   label: {
     fontSize: 14,
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 8,
+    borderRadius: 15,
     paddingHorizontal: 12,
     backgroundColor: "#fff",
     height: 50,

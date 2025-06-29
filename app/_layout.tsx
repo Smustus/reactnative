@@ -23,12 +23,12 @@ function RootLayoutContent() {
   return (
     <Stack>
       {/* Protected routes: Only accessible if authenticated */}
-      <Stack.Protected guard={!isAuthenticated}>
+      <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>
 
       {/* Auth routes: Only accessible if NOT authenticated */}
-      <Stack.Protected guard={isAuthenticated}>
+      <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
       </Stack.Protected>

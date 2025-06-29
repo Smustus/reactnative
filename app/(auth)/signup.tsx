@@ -3,7 +3,14 @@ import { validateEmail } from "@/utils/validateEmail";
 import { Link } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Button,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../../components/Input";
 
@@ -52,40 +59,42 @@ const Signup = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Sign up</Text>
-      <Input
-        label="Email Address"
-        placeholder="Enter your email"
-        keyboardType="visible-password"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={handleEmailChange}
-        iconName="mail"
-        error={emailError}
-      />
-      <Input
-        label="Password"
-        placeholder="Enter your password"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={handlePasswordChange}
-        iconName="lock-closed"
-        error={passwordError}
-      />
-      <Button
-        title={isLoading ? "Signing Up..." : "Sign Up"}
-        onPress={handleSignup}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>Already have an account?</Text>
-        <Link href={"/login"} disabled={isLoading} asChild>
-          <TouchableOpacity>
-            <Text style={[styles.linkText, { color: "blue" }]}>
-              Click here to sign in
-            </Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
+      <KeyboardAvoidingView behavior="padding">
+        <Text style={styles.header}>Sign up</Text>
+        <Input
+          label="Email Address"
+          placeholder="Enter your email"
+          keyboardType="visible-password"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={handleEmailChange}
+          iconName="mail"
+          error={emailError}
+        />
+        <Input
+          label="Password"
+          placeholder="Enter your password"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={handlePasswordChange}
+          iconName="lock-closed"
+          error={passwordError}
+        />
+        <Button
+          title={isLoading ? "Signing Up..." : "Sign Up"}
+          onPress={handleSignup}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>Already have an account?</Text>
+          <Link href={"/login"} disabled={isLoading} asChild>
+            <TouchableOpacity>
+              <Text style={[styles.linkText, { color: "blue" }]}>
+                Click here to sign in
+              </Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
