@@ -50,15 +50,14 @@ const Input: React.FC<InputProps> = ({
           error && styles.inputWrapperError,
         ]}
       >
-        {iconName && (
-          <TouchableOpacity onPress={onIconPress} activeOpacity={0.7}>
-            <Ionicons
-              name={iconName}
-              size={20}
-              color={isFocused ? "#444" : "#666"}
-              style={styles.leftIcon}
-            />
-          </TouchableOpacity>
+        {iconName && ( 
+          <Ionicons
+            name={iconName}
+            size={20}
+            color={isFocused ? "#444" : "#666"}
+            style={styles.leftIcon}
+            tabIndex={0}
+          />
         )}
         <TextInput
           style={[styles.textInput, inputStyle]}

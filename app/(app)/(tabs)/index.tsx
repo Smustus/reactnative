@@ -1,8 +1,8 @@
 import { auth } from "@/firebase/FirebaseConfig";
 import { useRouter } from "expo-router";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../../assets/images/logo.jpg";
 
@@ -39,17 +39,11 @@ export default function Index() {
     return subscriber;
   }, []);
 
-  /*  if (initializing) return null; */
+  if (initializing) return null;
 
-  /* if (!user) {
-    return (
-      <SafeAreaView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <Text>Home Screen</Text>
-      </SafeAreaView>
-    );
-  } */
+  if (!auth.currentUser) {
+    router.replace("/login");
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -65,9 +59,9 @@ export default function Index() {
         showsVerticalScrollIndicator={false}
       >  */}
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => router.push("/login")}>
+        {/* <TouchableOpacity onPress={() => router.push("/login")}>
           <Text>Login</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <Image
           source={logo}

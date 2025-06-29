@@ -5,6 +5,8 @@ import { Link, useRouter } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -13,16 +15,17 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const savedLists = [
+/* const savedLists = [
   { id: "firstlist", title: "My First List" },
   { id: "groceries", title: "Groceries" },
   { id: "work", title: "Work To-Dos" },
-];
+]; */
 
 const Lists = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [savedLists, setSavedLists] = useState<any[]>([]);
   const [filteredLists, setFilteredLists] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const user = auth.currentUser;
 
@@ -30,7 +33,10 @@ const Lists = () => {
     if (!user) {
       router.replace("/login");
     }
-    async function fetchSavedLists() {
+    
+    try {
+      setIsLoading(true);
+      async function fetchSavedLists() {
       const querySnapshot = await getDocs(
         collection(db, `users/${user?.uid}/lists`)
       );
@@ -41,6 +47,13 @@ const Lists = () => {
       setSavedLists(lists);
     }
     fetchSavedLists();
+    } catch (error) {
+      console.log("Error fetching lists: " + error);
+      Alert.alert("Could not retrieve lists from database")
+    } finally {
+      setIsLoading(false);
+    }
+    
   }, [router, user]);
 
   useEffect(() => {
@@ -75,10 +88,12 @@ const Lists = () => {
           </TouchableOpacity>
         </Link>
         <View style={styles.listContainer}>
-          <FlatList
+          {isLoading && <ActivityIndicator color={"blue"} />}
+          {!isLoading && <FlatList
             style={{ width: "100%" }}
             data={searchQuery.length > 0 ? filteredLists : savedLists}
             renderItem={({ item }) => (
+             
               <Link
                 href={{
                   pathname: "/lists/[list]",
@@ -94,18 +109,12 @@ const Lists = () => {
                 </TouchableOpacity>
               </Link>
             )}
-            /* keyExtractor={(item) => item.id.toString()} */
-            /* ListHeaderComponent={
-              <>
-                <Text>Inköpslistor</Text>
-              </>
-            } */
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyText}>No lists found</Text>
               </View>
             }
-          ></FlatList>
+          />}
         </View>
       </View>
     </SafeAreaView>
@@ -138,6 +147,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   listItem: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
@@ -151,6 +164,15 @@ const styles = StyleSheet.create({
   },
   listTitle: {
     fontSize: 16,
+  },
+  deleteBtn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "red",
+    maxWidth: 40,
+    height: 40,
+    borderRadius: 50,
   },
   emptyContainer: {
     paddingTop: 20,
