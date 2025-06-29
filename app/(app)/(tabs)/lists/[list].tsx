@@ -8,7 +8,7 @@ const PurchaseList = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Stack.Screen options={{ title: list }} />
+      <Stack.Screen options={{ title: list.toUpperCase() }} />
       <View style={styles.container}>
         <Text>PurchaseList</Text>
         <Text>{list}</Text>

@@ -5,10 +5,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile = () => {
+  const user = auth.currentUser;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text>Profile</Text>
+        <Text>{user?.uid}</Text>
         <Link href={"/"} onPress={() => auth.signOut()} asChild>
           <TouchableOpacity>
             <Text style={styles.linkText}>Logout</Text>

@@ -1,29 +1,61 @@
+import Input from "@/components/Input";
+import { auth, db } from "@/firebase/FirebaseConfig";
 import { Stack, useRouter } from "expo-router";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+interface List {
+  listName: string;
+  items: string[];
+}
+
 const AddList = () => {
   const [listName, setListName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [listInfo, setListInfo] = useState<List>({
+    listName: "",
+    items: [],
+  });
   const router = useRouter();
+  const user = auth.currentUser;
 
-  const handleAddList = () => {
+  const handleAddList = async () => {
+    if (!listName.trim()) {
+      Alert.alert("Validation", "List name is required.");
+      return;
+    }
+
     setIsLoading(true);
+    setListInfo((prevValue) => ({ ...prevValue, listName }));
     try {
+      if (!user) {
+        router.replace("/login");
+      }
+
+      await addDoc(collection(db, `users/${user?.uid}/lists`), {
+        name: listName.trim(),
+        createdAt: serverTimestamp(),
+      });
+
+      setListName("");
+      Alert.alert("Success", "List created successfully.");
+      router.push(`/lists/${listName}`);
     } catch (error) {
       console.log("Error creating list: " + error);
+      Alert.alert("Error", "Something went wrong. Try again.");
+      router.back();
     } finally {
       setIsLoading(false);
-      router.push(`/lists/${listName}`);
     }
   };
 
@@ -31,13 +63,12 @@ const AddList = () => {
     <SafeAreaView style={[styles.container, { flex: 1 }]}>
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <Stack.Screen options={{ title: "Add List" }} />
-        {!listName && (
+        {!listInfo.listName && (
           <View>
             <Stack.Screen options={{ title: "Add List" }} />
 
             <Text style={styles.label}>List Name</Text>
-            <TextInput
-              style={styles.input}
+            <Input
               value={listName}
               onChangeText={setListName}
               placeholder="Enter your list name"
@@ -52,13 +83,12 @@ const AddList = () => {
             )}
           </View>
         )}
-        {listName && (
+        {listInfo.listName && (
           <View>
             <Stack.Screen options={{ title: "Add List" }} />
 
             <Text style={styles.label}>List Name</Text>
-            <TextInput
-              style={styles.input}
+            <Input
               value={listName}
               onChangeText={setListName}
               placeholder="Enter your list name"
@@ -102,10 +132,10 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 12,
+    borderRadius: 15,
     padding: 12,
-    marginBottom: 20,
-    backgroundColor: "fff",
+    marginBottom: 10,
+    backgroundColor: "#fff",
   },
   loading: {
     marginTop: 10,

@@ -1,3 +1,4 @@
+import { SearchBarProps } from "@/assets/interfaces/interfaces";
 import React, { useState } from "react";
 import { Image, StyleSheet, TextInput, View } from "react-native";
 import searchIcon from "../assets/icons/searchIcon.png";
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 12,
     paddingVertical: 5,
-    margin: 10,
+    margin: 5,
     width: "80%",
     borderWidth: 1,
     borderColor: "#777",

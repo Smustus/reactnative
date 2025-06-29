@@ -112,6 +112,8 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     fontWeight: 600,
+    textAlign: "center",
+    marginBottom: 20,
   },
   button: {
     paddingHorizontal: 20,

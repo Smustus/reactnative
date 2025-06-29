@@ -1,44 +1,18 @@
 import { InputProps } from "@/assets/interfaces/interfaces";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
 
-/* interface InputProps extends TextInputProps {
-  label?: string;
-  error?: string;
-  iconName?: ComponentProps<typeof Ionicons>["name"];
-  onIconPress?: () => void;
-  containerStyle?: object;
-  inputStyle?: object;
-  secureTextEntry?: boolean;
-} */
-
-const Input: React.FC<InputProps> = ({
+const AddProductInput: React.FC<InputProps> = ({
   label,
   error,
-  iconName,
   onIconPress,
   containerStyle,
   inputStyle,
-  secureTextEntry,
   placeholderTextColor = "#888",
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(!secureTextEntry); // Manage password visibility
-
   const handleFocus = () => setIsFocused(true);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -50,42 +24,19 @@ const Input: React.FC<InputProps> = ({
           error && styles.inputWrapperError,
         ]}
       >
-        {iconName && (
-          <TouchableOpacity onPress={onIconPress} activeOpacity={0.7}>
-            <Ionicons
-              name={iconName}
-              size={20}
-              color={isFocused ? "#444" : "#666"}
-              style={styles.leftIcon}
-            />
-          </TouchableOpacity>
-        )}
         <TextInput
           style={[styles.textInput, inputStyle]}
           placeholderTextColor={placeholderTextColor}
           onFocus={handleFocus}
-          secureTextEntry={secureTextEntry && !showPassword} // Apply secureTextEntry conditionally
           {...rest}
         />
-        {secureTextEntry && (
-          <TouchableOpacity
-            onPress={togglePasswordVisibility}
-            style={styles.rightIcon}
-          >
-            <Ionicons
-              name={showPassword ? "eye-off" : "eye"}
-              size={20}
-              color="#666"
-            />
-          </TouchableOpacity>
-        )}
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
 
-export default Input;
+export default AddProductInput;
 
 const styles = StyleSheet.create({
   container: {
