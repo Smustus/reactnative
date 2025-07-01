@@ -31,10 +31,7 @@ const Input: React.FC<InputProps> = ({
   placeholderTextColor = "#888",
   ...rest
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(!secureTextEntry); // Manage password visibility
-
-  const handleFocus = () => setIsFocused(true);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -43,18 +40,12 @@ const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View
-        style={[
-          styles.inputWrapper,
-          isFocused && styles.inputWrapperFocused,
-          error && styles.inputWrapperError,
-        ]}
-      >
-        {iconName && ( 
+      <View style={[styles.inputWrapper, error && styles.inputWrapperError]}>
+        {iconName && (
           <Ionicons
             name={iconName}
             size={20}
-            color={isFocused ? "#444" : "#666"}
+            color={"#666"}
             style={styles.leftIcon}
             tabIndex={0}
           />
@@ -62,7 +53,6 @@ const Input: React.FC<InputProps> = ({
         <TextInput
           style={[styles.textInput, inputStyle]}
           placeholderTextColor={placeholderTextColor}
-          onFocus={handleFocus}
           secureTextEntry={secureTextEntry && !showPassword} // Apply secureTextEntry conditionally
           {...rest}
         />
@@ -102,19 +92,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#999",
     borderRadius: 15,
     paddingHorizontal: 12,
     backgroundColor: "#fff",
     height: 50,
-  },
-  inputWrapperFocused: {
-    borderColor: "#444",
-    shadowColor: "#444",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   inputWrapperError: {
     borderColor: "#dc3545", // Red for error

@@ -26,7 +26,7 @@ export default function Index() {
 
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(auth.currentUser);
 
   // Handle user state changes
   function handleAuthStateChanged(user: User | null) {
@@ -41,28 +41,13 @@ export default function Index() {
 
   if (initializing) return null;
 
-  if (!auth.currentUser) {
+  if (!user) {
     router.replace("/login");
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/* <ScrollView
-        style={{
-          flex: 1,
-          width: "100%",
-        }}
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        showsVerticalScrollIndicator={false}
-      >  */}
       <View style={styles.container}>
-        {/* <TouchableOpacity onPress={() => router.push("/login")}>
-          <Text>Login</Text>
-        </TouchableOpacity> */}
-
         <Image
           source={logo}
           style={{
@@ -73,7 +58,6 @@ export default function Index() {
         <Text>HOME SCREEN</Text>
         <Text>Edit app/index.tsx to edit this screen.</Text>
       </View>
-      {/*  </ScrollView> */}
     </SafeAreaView>
   );
 }

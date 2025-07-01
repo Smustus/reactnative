@@ -1,9 +1,11 @@
 import SearchBar from "@/components/SearchBar";
-import { auth, db } from "@/firebase/FirebaseConfig";
+import { useAuth } from "@/context/AuthContext";
+import { db } from "@/firebase/FirebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { Link, useRouter } from "expo-router";
 import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -27,34 +29,39 @@ const Lists = () => {
   const [filteredLists, setFilteredLists] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const user = auth.currentUser;
+  const { user, initializing } = useAuth();
 
-  useEffect(() => {
-    if (!user) {
-      router.replace("/login");
-    }
-    
-    try {
-      setIsLoading(true);
-      async function fetchSavedLists() {
-      const querySnapshot = await getDocs(
-        collection(db, `users/${user?.uid}/lists`)
-      );
-      const lists = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setSavedLists(lists);
-    }
-    fetchSavedLists();
-    } catch (error) {
-      console.log("Error fetching lists: " + error);
-      Alert.alert("Could not retrieve lists from database")
-    } finally {
-      setIsLoading(false);
-    }
-    
-  }, [router, user]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!initializing && !user) {
+        router.replace("/login");
+        return;
+      }
+
+      const fetchSavedLists = async () => {
+        try {
+          setIsLoading(true);
+          const querySnapshot = await getDocs(
+            collection(db, `users/${user?.uid}/lists`)
+          );
+          const lists = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setSavedLists(lists);
+        } catch (error) {
+          console.log("Error fetching lists: " + error);
+          Alert.alert("Could not retrieve lists from database");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchSavedLists();
+
+      return () => {};
+    }, [user, initializing, router])
+  );
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -88,33 +95,44 @@ const Lists = () => {
           </TouchableOpacity>
         </Link>
         <View style={styles.listContainer}>
-          {isLoading && <ActivityIndicator color={"blue"} />}
-          {!isLoading && <FlatList
-            style={{ width: "100%" }}
-            data={searchQuery.length > 0 ? filteredLists : savedLists}
-            renderItem={({ item }) => (
-             
-              <Link
-                href={{
-                  pathname: "/lists/[list]",
-                  params: { list: item.name },
-                }}
-                style={styles.listItem}
-                asChild
-              >
-                <TouchableOpacity /* style={styles.listItem} */>
-                  <Text style={styles.listTitle}>
-                    {item.name.toUpperCase()}
-                  </Text>
-                </TouchableOpacity>
-              </Link>
-            )}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No lists found</Text>
-              </View>
-            }
-          />}
+          {isLoading && (
+            <ActivityIndicator
+              color={"blue"}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+              }}
+            />
+          )}
+          {!isLoading && (
+            <FlatList
+              style={{ width: "100%" }}
+              data={searchQuery.length > 0 ? filteredLists : savedLists}
+              renderItem={({ item }) => (
+                <Link
+                  href={{
+                    pathname: "/lists/[list]",
+                    params: { list: item.name, id: item.id },
+                  }}
+                  style={styles.listItem}
+                  asChild
+                >
+                  <TouchableOpacity /* style={styles.listItem} */>
+                    <Text style={styles.listTitle}>
+                      {item.name.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              )}
+              ListEmptyComponent={
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No lists found</Text>
+                </View>
+              }
+            />
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -150,17 +168,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignContent: "center",
+    alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     /*     alignSelf: "flex-start", */
     backgroundColor: "#999999",
     width: "100%",
-    borderRadius: 15,
+    borderRadius: 6,
     padding: 10,
     marginVertical: 3,
-    minHeight: 50,
+    minHeight: 70,
   },
   listTitle: {
     fontSize: 16,

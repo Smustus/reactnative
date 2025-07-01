@@ -49,7 +49,7 @@ const AddList = () => {
 
       setListName("");
       Alert.alert("Success", "List created successfully.");
-      router.push(`/lists/${listName}`);
+      router.replace(`/lists/${listName}`);
     } catch (error) {
       console.log("Error creating list: " + error);
       Alert.alert("Error", "Something went wrong. Try again.");
