@@ -42,14 +42,17 @@ const AddList = () => {
         router.replace("/login");
       }
 
-      await addDoc(collection(db, `users/${user?.uid}/lists`), {
+      const data = await addDoc(collection(db, `users/${user?.uid}/lists`), {
         name: listName.trim(),
         createdAt: serverTimestamp(),
       });
-
+      console.log("Added list: " + data.id);
+      
       setListName("");
-      Alert.alert("Success", "List created successfully.");
-      router.replace(`/lists/${listName}`);
+      router.replace({
+        pathname: "/lists/[list]",
+        params: { list: listName, id: data.id },
+});
     } catch (error) {
       console.log("Error creating list: " + error);
       Alert.alert("Error", "Something went wrong. Try again.");

@@ -1,7 +1,7 @@
 import Input from "@/components/Input";
 import { auth, db } from "@/firebase/FirebaseConfig";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
   Alert,
@@ -24,17 +24,28 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
+    console.log(listId);
+    console.log(listName);
+    
     if (!user || !listId) return;
+    
+    if (!name.trim() || !retailer.trim() || !price.trim()) {
+          Alert.alert("Fill all fields please");
+          return;
+        }
+    
 
     try {
-      await addDoc(
-        collection(db, `users/${user.uid}/lists/${listId}/products`),
-        {
+      await updateDoc(
+        doc(db, `users/${user.uid}/lists/${listId}`),
+      {
+        products: arrayUnion({
           name,
           retailer,
           price: parseFloat(price),
           createdAt: new Date(),
-        }
+        }),
+      }
       );
       Alert.alert("Success", "Product added!");
       router.back();
