@@ -1,14 +1,11 @@
-import Input from "@/components/Input";
+import ProductForm from "@/components/ProductForm";
 import { auth, db } from "@/firebase/FirebaseConfig";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
   Alert,
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
+  StyleSheet
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -33,15 +30,16 @@ const AddProduct = () => {
     }
 
     try {
+      const id = doc(collection(db, "tmp")).id;
       await updateDoc(doc(db, `users/${user.uid}/lists/${listId}`), {
         products: arrayUnion({
+          id,
           name,
           retailer,
           price: parseFloat(price),
           createdAt: new Date(),
         }),
       });
-      Alert.alert("Success", "Product added!");
       router.back();
     } catch (error) {
       console.log(error);
@@ -52,25 +50,22 @@ const AddProduct = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Add Product" }} />
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      {/* <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <Text style={styles.heading}>Add Product to {listName}</Text>
 
         <Input
           placeholder="Product Name"
-          /* style={styles.input} */
           value={name}
           onChangeText={setName}
         />
         <Input
           placeholder="Retailer"
-          /* style={styles.input} */
           value={retailer}
           onChangeText={setRetailer}
         />
         <Input
           placeholder="Price"
           keyboardType="decimal-pad"
-          /* style={styles.input} */
           value={price}
           onChangeText={setPrice}
         />
@@ -78,7 +73,10 @@ const AddProduct = () => {
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Save to List</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView> */}
+      {listId && listName && (
+        <ProductForm listId={listId} listName={listName} />
+      )}
     </SafeAreaView>
   );
 };
@@ -88,7 +86,7 @@ export default AddProduct;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 30,
   },
   heading: {
     fontSize: 18,

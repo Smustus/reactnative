@@ -7,8 +7,8 @@ import {
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import React, { useCallback, useEffect, useState } from "react";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,7 +16,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -28,16 +28,25 @@ const PurchaseList = () => {
   const router = useRouter();
   const { user, initializing } = useAuth();
 
-  useEffect(() => {
+  /* useEffect(() => {
     console.log("Products: " + productList);
-  }, [productList]);
+  }, [productList]); */
+
+  const checkAuth = useCallback(() => {
+    if (initializing) return;
+        if (!user) {
+          router.replace("/login");
+          return;
+        }
+  }, []);
 
   const handleDeleteList = async () => {
     if (initializing) return;
-    if (!user) {
-      router.replace("/login");
-      return;
-    }
+        if (!user) {
+          router.replace("/login");
+          return;
+        }
+    
     try {
       setIsloading(true);
       await deleteDoc(doc(db, `users/${user.uid}/lists/${id}`));
@@ -48,6 +57,30 @@ const PurchaseList = () => {
     } finally {
       setIsloading(false);
       setModalVisible(false);
+    }
+  };
+
+    const handleDeleteProduct = async (productId: string) => {
+    if (initializing) return;
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    try {
+      setIsloading(true);
+      const listRef = doc(db, `users/${user.uid}/lists/${id}`)
+      const listSnap = await getDoc(listRef);
+      const data = listSnap.data();
+      if (!data?.products) return;
+
+      const updatedProducts = data.products.filter((product: any) => product.id !== productId);
+      await updateDoc(listRef, { products: updatedProducts });
+      setProductList(updatedProducts);
+    } catch (error) {
+      console.log("Error deleting product: " + error);
+    } finally {
+      setIsloading(false);
     }
   };
 
@@ -130,6 +163,15 @@ const PurchaseList = () => {
                   <Text>{item.name}</Text>
                   <Text>{item.retailer}</Text>
                   <Text>{item.price} kr</Text>
+                  <TouchableOpacity
+                    style={styles.deleteBtn}
+                    onPress={() => handleDeleteProduct(item.id)}
+                    disabled={isLoading}
+                  >
+                    <Text style={styles.deleteBtnText}>
+                      {isLoading ? "Deleting..." : "Delete"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               )}
             />
