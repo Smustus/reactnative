@@ -1,20 +1,39 @@
 import ConfirmationModal from "@/components/ConfirmationModal";
-import { auth, db } from "@/firebase/FirebaseConfig";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { deleteDoc, doc } from "firebase/firestore";
-import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "@/context/AuthContext";
+import { db } from "@/firebase/FirebaseConfig";
+import {
+  Stack,
+  useFocusEffect,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const PurchaseList = () => {
   const { list, id } = useLocalSearchParams<{ list: string; id: string }>();
-  const [productList, setProductList] = useState([]);
+  const [productList, setProductList] = useState<any[]>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
+  const { user, initializing } = useAuth();
+
+  useEffect(() => {
+    console.log("Products: " + productList);
+  }, [productList]);
 
   const handleDeleteList = async () => {
-    const user = auth.currentUser;
+    if (initializing) return;
     if (!user) {
       router.replace("/login");
       return;
@@ -32,29 +51,48 @@ const PurchaseList = () => {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      if (initializing) return;
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
+      const fetchListProducts = async () => {
+        try {
+          setIsloading(true);
+          const querySnapshot = await getDoc(
+            doc(db, `users/${user.uid}/lists/${id}`)
+          );
+          if (!querySnapshot.exists()) return;
+          const list = querySnapshot.data();
+          setProductList(list.products);
+        } catch (error) {
+          console.log("Error fetching list items: " + error);
+        } finally {
+          setIsloading(false);
+        }
+      };
+      fetchListProducts();
+    }, [id, initializing, router, user])
+  );
+
+  if (initializing || isLoading)
+    return (
+      <ActivityIndicator
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        size="large"
+      />
+    );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Stack.Screen options={{ title: list.toUpperCase() }} />
 
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.deleteBtn}
-          onPress={() => setModalVisible(true)}
-          disabled={isLoading}
-        >
-          <Text style={styles.deleteBtnText}>
-            {isLoading ? "Deleting..." : "Delete"}
-          </Text>
-        </TouchableOpacity>
-
         <Text>PurchaseList</Text>
         <Text>{list}</Text>
-        <View style={styles.productContainer}>
-          {productList?.length === 0 ? (
-            <Text>No products</Text>
-          ) : (
-            <Text>Products</Text>
-          )}
+        <View style={styles.btnContainer}>
           <TouchableOpacity
             style={styles.addProductBtn}
             onPress={() =>
@@ -67,6 +105,35 @@ const PurchaseList = () => {
           >
             <Text style={styles.addProductBtnText}>Add Product</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={() => setModalVisible(true)}
+            disabled={isLoading}
+          >
+            <Text style={styles.deleteBtnText}>
+              {isLoading ? "Deleting..." : "Delete List"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.productContainer}>
+          {!productList || productList?.length === 0 ? (
+            <View style={styles.productList}>
+              <Text>No products</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={productList}
+              contentContainerStyle={styles.productList}
+              renderItem={({ item }) => (
+                <View style={styles.productCard}>
+                  <Text>{item.name}</Text>
+                  <Text>{item.retailer}</Text>
+                  <Text>{item.price} kr</Text>
+                </View>
+              )}
+            />
+          )}
         </View>
       </View>
 
@@ -89,28 +156,55 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingHorizontal: 30,
+  },
+  btnContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginVertical: 10,
   },
   productContainer: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    width: "100%",
+  },
+  productList: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingBottom: 20,
+    marginVertical: 5,
+  },
+  productCard: {
+    width: "100%",
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 12,
+    backgroundColor: "#f9f9f9",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   deleteBtn: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#ff4d4f",
     maxHeight: 50,
     paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 50,
+    paddingVertical: 10,
+    borderRadius: 12,
     margin: 5,
   },
   deleteBtnText: {
     fontWeight: "bold",
   },
   addProductBtn: {
-    padding: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     margin: 5,
   },
   addProductBtnText: {

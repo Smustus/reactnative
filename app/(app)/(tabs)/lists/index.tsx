@@ -67,7 +67,7 @@ const Lists = () => {
     if (searchQuery.length > 0) {
       setFilteredLists(
         savedLists.filter((list) =>
-          list.title.toLowerCase().includes(searchQuery.toLowerCase())
+          list.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }

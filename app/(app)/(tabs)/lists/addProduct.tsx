@@ -24,29 +24,23 @@ const AddProduct = () => {
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
-    console.log(listId);
-    console.log(listName);
-    
+
     if (!user || !listId) return;
-    
+
     if (!name.trim() || !retailer.trim() || !price.trim()) {
-          Alert.alert("Fill all fields please");
-          return;
-        }
-    
+      Alert.alert("Fill all fields please");
+      return;
+    }
 
     try {
-      await updateDoc(
-        doc(db, `users/${user.uid}/lists/${listId}`),
-      {
+      await updateDoc(doc(db, `users/${user.uid}/lists/${listId}`), {
         products: arrayUnion({
           name,
           retailer,
           price: parseFloat(price),
           createdAt: new Date(),
         }),
-      }
-      );
+      });
       Alert.alert("Success", "Product added!");
       router.back();
     } catch (error) {
@@ -105,13 +99,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 12,
   },
   button: {
     backgroundColor: "dodgerblue",
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
   },

@@ -47,12 +47,12 @@ const AddList = () => {
         createdAt: serverTimestamp(),
       });
       console.log("Added list: " + data.id);
-      
+
       setListName("");
       router.replace({
         pathname: "/lists/[list]",
         params: { list: listName, id: data.id },
-});
+      });
     } catch (error) {
       console.log("Error creating list: " + error);
       Alert.alert("Error", "Something went wrong. Try again.");
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 15,
+    borderRadius: 12,
     padding: 12,
     marginBottom: 10,
     backgroundColor: "#fff",
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 15,
+    borderRadius: 12,
     backgroundColor: "lightblue",
     alignItems: "center",
     borderWidth: 1,
