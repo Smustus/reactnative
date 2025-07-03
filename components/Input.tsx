@@ -10,16 +10,6 @@ import {
   View,
 } from "react-native";
 
-/* interface InputProps extends TextInputProps {
-  label?: string;
-  error?: string;
-  iconName?: ComponentProps<typeof Ionicons>["name"];
-  onIconPress?: () => void;
-  containerStyle?: object;
-  inputStyle?: object;
-  secureTextEntry?: boolean;
-} */
-
 const Input: React.FC<InputProps> = ({
   label,
   error,
@@ -78,9 +68,9 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 15,
+    marginBottom: 25,
     width: "100%",
-    minWidth: 300,
+    position: "relative",
   },
   label: {
     fontSize: 14,
@@ -117,5 +107,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#dc3545", // Red for error text
     marginTop: 5,
+    position: "absolute",
+    bottom: -18,
+    left: 5,
   },
 });

@@ -17,12 +17,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-/* const savedLists = [
-  { id: "firstlist", title: "My First List" },
-  { id: "groceries", title: "Groceries" },
-  { id: "work", title: "Work To-Dos" },
-]; */
-
 const Lists = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [savedLists, setSavedLists] = useState<any[]>([]);
@@ -30,6 +24,10 @@ const Lists = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
   const { user, initializing } = useAuth();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   useFocusEffect(
     useCallback(() => {
@@ -71,7 +69,6 @@ const Lists = () => {
         )
       );
     }
-    console.log(savedLists);
   }, [searchQuery, savedLists]);
 
   return (
@@ -114,7 +111,7 @@ const Lists = () => {
                 <Link
                   href={{
                     pathname: "/lists/[list]",
-                    params: { list: item.name, id: item.id },
+                    params: { list: item.name, listId: item.id },
                   }}
                   style={styles.listItem}
                   asChild
@@ -145,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    padding: 30,
+    paddingHorizontal: 30,
   },
   heading: {
     fontSize: 18,
@@ -201,8 +198,8 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   button: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     borderRadius: 25,
     backgroundColor: "lightblue",
     alignItems: "center",

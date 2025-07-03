@@ -1,31 +1,42 @@
-// components/AddProductForm.tsx
 import Input from "@/components/Input";
 import { auth, db } from "@/firebase/FirebaseConfig";
 import { useRouter } from "expo-router";
-import { arrayUnion, collection, doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from "react-native";
+
+interface Product {
+  id: string;
+  name: string;
+  retailer: string;
+  price: number;
+  createdAt: Date;
+}
 
 interface ProductFormProps {
   listId: string;
   listName: string;
+  productToEdit?: Product;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ listId, listName }) => {
-  const [name, setName] = useState("");
-  const [retailer, setRetailer] = useState("");
-  const [price, setPrice] = useState("");
+const ProductForm: React.FC<ProductFormProps> = ({
+  listId,
+  listName,
+  productToEdit,
+}) => {
+  const [name, setName] = useState(productToEdit?.name || "");
+  const [retailer, setRetailer] = useState(productToEdit?.retailer || "");
+  const [price, setPrice] = useState(productToEdit?.price.toString() || "");
   const router = useRouter();
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
-
     if (!user || !listId) return;
 
     if (!name.trim() || !retailer.trim() || !price.trim()) {
@@ -34,32 +45,53 @@ const ProductForm: React.FC<ProductFormProps> = ({ listId, listName }) => {
     }
 
     try {
-      const id = doc(collection(db, "tmp")).id;
-      await updateDoc(doc(db, `users/${user.uid}/lists/${listId}`), {
-        products: arrayUnion({
+      const listRef = doc(db, `users/${user.uid}/lists/${listId}`);
+      const listSnap = await getDoc(listRef);
+      const data = listSnap.data();
+
+      if (!data) return;
+
+      let updatedProducts;
+
+      if (productToEdit) {
+        // Editing
+        updatedProducts = data.products.map((product: Product) =>
+          product.id === productToEdit.id
+            ? {
+                ...product,
+                name,
+                retailer,
+                price: parseFloat(price),
+              }
+            : product
+        );
+      } else {
+        // Adding new
+        const id = doc(collection(db, "tmp")).id;
+        const newProduct: Product = {
           id,
           name,
           retailer,
           price: parseFloat(price),
           createdAt: new Date(),
-        }),
-      });
+        };
+        updatedProducts = [...data.products, newProduct];
+      }
+      await updateDoc(listRef, { products: updatedProducts });
       router.back();
     } catch (error) {
-      console.log(error);
+      console.log("Failed to add product: " + error);
       Alert.alert("Error", "Failed to add product.");
     }
   };
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-      <Text style={styles.heading}>Add Product to {listName}</Text>
+      <Text style={styles.heading}>
+        {productToEdit ? "Edit" : "Add"} Product to {listName}
+      </Text>
 
-      <Input
-        placeholder="Product Name"
-        value={name}
-        onChangeText={setName}
-      />
+      <Input placeholder="Product Name" value={name} onChangeText={setName} />
       <Input
         placeholder="Retailer"
         value={retailer}
@@ -73,7 +105,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ listId, listName }) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Save to List</Text>
+        <Text style={styles.buttonText}>
+          {productToEdit ? "Save Change" : "Save to List"}
+        </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );

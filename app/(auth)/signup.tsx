@@ -1,10 +1,10 @@
-import { auth } from "@/firebase/FirebaseConfig";
+import { auth, db } from "@/firebase/FirebaseConfig";
 import { validateEmail } from "@/utils/validateEmail";
 import { Link } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import {
-  Button,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
@@ -42,7 +42,17 @@ const Signup = () => {
   const handleSignup = async () => {
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email?.toLowerCase(),
+        createdAt: new Date(),
+      });
     } catch (error: any) {
       console.log("Error during signup: " + error);
       if (error.code === "auth/email-already-in-use") {
@@ -70,6 +80,7 @@ const Signup = () => {
           onChangeText={handleEmailChange}
           iconName="mail"
           error={emailError}
+          containerStyle={{ minWidth: 300 }}
         />
         <Input
           label="Password"
@@ -79,11 +90,21 @@ const Signup = () => {
           onChangeText={handlePasswordChange}
           iconName="lock-closed"
           error={passwordError}
+          containerStyle={{ minWidth: 300 }}
         />
-        <Button
-          title={isLoading ? "Signing Up..." : "Sign Up"}
+        <Link
+          href={"/"}
+          disabled={isLoading}
           onPress={handleSignup}
-        />
+          style={styles.button}
+          asChild
+        >
+          <TouchableOpacity>
+            <Text style={styles.buttonText}>
+              {isLoading ? "Signing Up..." : "Sign Up"}
+            </Text>
+          </TouchableOpacity>
+        </Link>
         <View style={styles.textContainer}>
           <Text style={styles.text}>Already have an account?</Text>
           <Link href={"/login"} disabled={isLoading} asChild>
@@ -104,13 +125,15 @@ export default Signup;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 30,
     justifyContent: "center",
     alignItems: "center",
   },
   header: {
     fontSize: 20,
     fontWeight: 600,
+    textAlign: "center",
+    marginBottom: 20,
   },
   textContainer: {
     marginVertical: 10,
@@ -126,5 +149,17 @@ const styles = StyleSheet.create({
     padding: 2,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  button: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 15,
+    backgroundColor: "lightblue",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.2)",
+  },
+  buttonText: {
+    fontWeight: "bold",
   },
 });

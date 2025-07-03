@@ -45,6 +45,8 @@ const AddList = () => {
       const data = await addDoc(collection(db, `users/${user?.uid}/lists`), {
         name: listName.trim(),
         createdAt: serverTimestamp(),
+        owner: user?.uid,
+        sharedWith: [],
       });
       console.log("Added list: " + data.id);
 
@@ -124,7 +126,7 @@ export default AddList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 30,
     backgroundColor: "#fff",
   },
   label: {

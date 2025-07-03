@@ -62,6 +62,7 @@ const Login = () => {
           onChangeText={handleEmailChange}
           iconName="mail"
           error={emailError}
+          containerStyle={{ minWidth: 300 }}
         />
         <Input
           label="Password"
@@ -71,6 +72,7 @@ const Login = () => {
           onChangeText={handlePasswordChange}
           iconName="lock-closed"
           error={passwordError}
+          containerStyle={{ minWidth: 300 }}
         />
         <Link
           href={"/"}
@@ -105,7 +107,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 30,
     justifyContent: "center",
     alignItems: "center",
   },
