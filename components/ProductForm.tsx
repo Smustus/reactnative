@@ -22,12 +22,14 @@ interface Product {
 interface ProductFormProps {
   listId: string;
   listName: string;
+  ownerId: string;
   productToEdit?: Product;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({
   listId,
   listName,
+  ownerId,
   productToEdit,
 }) => {
   const [name, setName] = useState(productToEdit?.name || "");
@@ -37,6 +39,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   const handleSubmit = async () => {
     const user = auth.currentUser;
+
     if (!user || !listId) return;
 
     if (!name.trim() || !retailer.trim() || !price.trim()) {
@@ -45,9 +48,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
 
     try {
-      const listRef = doc(db, `users/${user.uid}/lists/${listId}`);
+      const listRef = doc(db, `users/${ownerId}/lists/${listId}`);
       const listSnap = await getDoc(listRef);
       const data = listSnap.data();
+      console.log(data);
 
       if (!data) return;
 
@@ -75,8 +79,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
           price: parseFloat(price),
           createdAt: new Date(),
         };
-        updatedProducts = [...data.products, newProduct];
+        updatedProducts = [...(data.products ?? ""), newProduct];
       }
+
       await updateDoc(listRef, { products: updatedProducts });
       router.back();
     } catch (error) {

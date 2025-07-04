@@ -5,17 +5,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AddProduct = () => {
-  const { listId, listName } = useLocalSearchParams<{
+  const { listId, listName, ownerId } = useLocalSearchParams<{
     listId: string;
     listName: string;
+    ownerId: string;
   }>();
 
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Add Product" }} />
-      {listId && listName && (
-        <ProductForm listId={listId} listName={listName} />
-      )}
+      <ProductForm listId={listId} listName={listName} ownerId={ownerId} />
     </SafeAreaView>
   );
 };

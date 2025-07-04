@@ -45,7 +45,7 @@ const AddList = () => {
       const data = await addDoc(collection(db, `users/${user?.uid}/lists`), {
         name: listName.trim(),
         createdAt: serverTimestamp(),
-        owner: user?.uid,
+        ownerId: user?.uid,
         sharedWith: [],
       });
       console.log("Added list: " + data.id);

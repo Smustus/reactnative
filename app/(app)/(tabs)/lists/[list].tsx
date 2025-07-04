@@ -25,9 +25,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const PurchaseList = () => {
-  const { list, listId } = useLocalSearchParams<{
+  const { list, listId, ownerId } = useLocalSearchParams<{
     list: string;
     listId: string;
+    ownerId: string;
   }>();
   const [productList, setProductList] = useState<any[]>([]);
   const [isLoading, setIsloading] = useState<boolean>(false);
@@ -46,7 +47,8 @@ const PurchaseList = () => {
     fetchUser();
     console.log("User: " + user?.uid);
     console.log("List id: " + listId); */
-  }, [shareEmail, initializing, user, listId]);
+    /* console.log("Owner: " + ownerId); */
+  }, [shareEmail, initializing, user, listId, ownerId]);
 
   const handleEmailChange = (text: string) => {
     setShareEmail(text);
@@ -113,15 +115,13 @@ const PurchaseList = () => {
     try {
       setIsloading(true);
       const targetUid = await getUserByEmail(shareEmail);
-      /* console.log("User: " + user.uid);
-      console.log("List id: " + listId);
-      console.log("Target:" + targetUid); */
-      if (!targetUid) return Alert.alert("User was not found");
+      if (!targetUid) return Alert.alert("User doesn't exist");
       await shareListWithUser(user.uid, listId, targetUid);
       Alert.alert("List successfully shared!");
     } catch (error) {
       console.log("Error sharing list: " + error);
     } finally {
+      setShareEmail("");
       setIsloading(false);
     }
   };
@@ -137,7 +137,7 @@ const PurchaseList = () => {
         try {
           setIsloading(true);
           const querySnapshot = await getDoc(
-            doc(db, `users/${user.uid}/lists/${listId}`)
+            doc(db, `users/${ownerId}/lists/${listId}`)
           );
           if (!querySnapshot.exists()) return;
           const list = querySnapshot.data();
@@ -149,7 +149,7 @@ const PurchaseList = () => {
         }
       };
       fetchListProducts();
-    }, [listId, initializing, router, user])
+    }, [listId, initializing, router, user, ownerId])
   );
 
   if (initializing || isLoading)
@@ -194,22 +194,24 @@ const PurchaseList = () => {
             onPress={() =>
               router.push({
                 pathname: "/lists/addProduct",
-                params: { listId: listId, listName: list },
+                params: { listId: listId, listName: list, ownerId: ownerId },
               })
             }
             disabled={isLoading}
           >
             <Text style={styles.addProductBtnText}>Add Product</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => setModalVisible(true)}
-            disabled={isLoading}
-          >
-            <Text style={styles.deleteBtnText}>
-              {isLoading ? "Deleting..." : "Delete List"}
-            </Text>
-          </TouchableOpacity>
+          {ownerId === user?.uid && (
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => setModalVisible(true)}
+              disabled={isLoading}
+            >
+              <Text style={styles.deleteBtnText}>
+                {isLoading ? "Deleting..." : "Delete List"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.productContainer}>
@@ -226,6 +228,7 @@ const PurchaseList = () => {
                   item={item}
                   listId={listId}
                   listName={list}
+                  ownerId={ownerId}
                   isLoading={isLoading}
                   handleDeleteProduct={handleDeleteProduct}
                 />

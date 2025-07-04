@@ -1,10 +1,9 @@
 import SearchBar from "@/components/SearchBar";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/firebase/FirebaseConfig";
+import { fetchAccessibleLists } from "@/utils/firestore";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { Link, useRouter } from "expo-router";
-import { collection, getDocs } from "firebase/firestore";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -25,27 +24,17 @@ const Lists = () => {
   const router = useRouter();
   const { user, initializing } = useAuth();
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   useFocusEffect(
     useCallback(() => {
-      if (!initializing && !user) {
+      if (initializing || !user) {
         router.replace("/login");
         return;
       }
 
-      const fetchSavedLists = async () => {
+      const fetchLists = async () => {
         try {
           setIsLoading(true);
-          const querySnapshot = await getDocs(
-            collection(db, `users/${user?.uid}/lists`)
-          );
-          const lists = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+          const lists = await fetchAccessibleLists(user.uid);
           setSavedLists(lists);
         } catch (error) {
           console.log("Error fetching lists: " + error);
@@ -54,8 +43,7 @@ const Lists = () => {
           setIsLoading(false);
         }
       };
-
-      fetchSavedLists();
+      fetchLists();
 
       return () => {};
     }, [user, initializing, router])
@@ -111,7 +99,11 @@ const Lists = () => {
                 <Link
                   href={{
                     pathname: "/lists/[list]",
-                    params: { list: item.name, listId: item.id },
+                    params: {
+                      list: item.name,
+                      listId: item.id,
+                      ownerId: item.ownerId,
+                    },
                   }}
                   style={styles.listItem}
                   asChild

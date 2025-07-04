@@ -35,6 +35,7 @@ export const shareListWithUser = async (
 
 export const fetchAccessibleLists = async (userId: string) => {
   const ownedListsQuery = query(collection(db, `users/${userId}/lists`));
+
   const sharedListsQuery = query(
     collectionGroup(db, "lists"),
     where("sharedWith", "array-contains", userId)
@@ -53,5 +54,5 @@ export const fetchAccessibleLists = async (userId: string) => {
     .filter((doc) => doc.data().ownerId !== userId)
     .map((doc) => ({ ...doc.data(), id: doc.id }));
 
-  return [...ownedLists, ...sharedLists];
+  return [...(ownedLists ?? ""), ...(sharedLists ?? "")];
 };

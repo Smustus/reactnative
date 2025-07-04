@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -14,6 +14,7 @@ interface ProductCardProps {
   item: any;
   listId: string;
   listName: string;
+  ownerId: string;
   isLoading: boolean;
   handleDeleteProduct: (id: string) => void;
   handleEditProduct?: (id: string) => void;
@@ -23,13 +24,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   item,
   listId,
   listName,
+  ownerId,
   isLoading,
   handleDeleteProduct,
 }) => {
+  const [isFinished, setIsFinished] = useState(false);
   const router = useRouter();
   const { user, initializing } = useAuth();
 
-  const handleEditProduct = async (productId: string) => {
+  const handleEditProduct = async () => {
+    console.log(ownerId);
+
     if (initializing) return;
     if (!user) {
       router.replace("/login");
@@ -38,53 +43,66 @@ const ProductCard: React.FC<ProductCardProps> = ({
     router.push({
       pathname: "/lists/editProduct",
       params: {
-        listId: listId,
-        listName: listName,
+        listId,
+        listName,
         id: item.id,
+        ownerId,
         name: item.name,
         retailer: item.retailer,
         price: item.price.toString(),
       },
     });
   };
+
   return (
-    <View style={styles.productCard}>
+    <TouchableOpacity
+      style={[styles.productCard, isFinished && styles.finishedCard]}
+      onPress={() => setIsFinished((prev) => !prev)}
+      activeOpacity={0.8}
+    >
       <View style={styles.infoContainer}>
         <View style={styles.infoBlock}>
           <Text style={styles.label}>Product</Text>
-          <Text style={styles.value}>{item.name}</Text>
+          <Text style={[styles.value, isFinished && styles.strikethrough]}>
+            {item.name}
+          </Text>
         </View>
         <View style={styles.infoBlock}>
           <Text style={styles.label}>Store</Text>
-          <Text style={styles.value}>{item.retailer}</Text>
+          <Text style={[styles.value, isFinished && styles.strikethrough]}>
+            {item.retailer}
+          </Text>
         </View>
         <View style={styles.infoBlock}>
           <Text style={styles.label}>Price</Text>
-          <Text style={styles.value}>{item.price} kr</Text>
+          <Text style={[styles.value, isFinished && styles.strikethrough]}>
+            {item.price} kr
+          </Text>
         </View>
       </View>
 
       <View style={styles.btnContainer}>
         <TouchableOpacity
           style={styles.editBtn}
-          onPress={() => handleEditProduct(item.id)}
+          onPress={() => handleEditProduct()}
           disabled={isLoading}
         >
           <Ionicons name="pencil-outline" size={18} color="#fff" />
         </TouchableOpacity>
-        {isLoading ? (
-          <ActivityIndicator size="small" />
-        ) : (
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => handleDeleteProduct(item.id)}
-            disabled={isLoading}
-          >
-            <Ionicons name={"trash-outline"} size={18} color="#fff" />
-          </TouchableOpacity>
-        )}
+        {ownerId === user?.uid &&
+          (isLoading ? (
+            <ActivityIndicator size="small" />
+          ) : (
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => handleDeleteProduct(item.id)}
+              disabled={isLoading}
+            >
+              <Ionicons name={"trash-outline"} size={18} color="#fff" />
+            </TouchableOpacity>
+          ))}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -103,6 +121,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  finishedCard: {
+    opacity: 0.6,
   },
   infoContainer: {
     flexGrow: 1,
@@ -124,10 +145,13 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#333",
   },
+  strikethrough: {
+    textDecorationLine: "line-through",
+    color: "#999",
+  },
   btnContainer: {
     flexDirection: "row",
     alignItems: "center",
-    /* justifyContent: "center", */
   },
   editBtn: {
     justifyContent: "center",

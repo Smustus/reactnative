@@ -1,8 +1,7 @@
-import { auth } from "@/firebase/FirebaseConfig";
+import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
-import { onAuthStateChanged, User } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../../assets/images/logo.jpg";
 
@@ -23,23 +22,9 @@ const styles = StyleSheet.create({
 
 export default function Index() {
   const router = useRouter();
+  const { user, initializing } = useAuth();
 
-  // Set an initializing state whilst Firebase connects
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState<User | null>(auth.currentUser);
-
-  // Handle user state changes
-  function handleAuthStateChanged(user: User | null) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
-  useEffect(() => {
-    const subscriber = onAuthStateChanged(auth, handleAuthStateChanged);
-    return subscriber;
-  }, []);
-
-  if (initializing) return null;
+  if (initializing) return <ActivityIndicator size={"large"} />;
 
   if (!user) {
     router.replace("/login");
