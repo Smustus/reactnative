@@ -42,6 +42,6 @@ export default EditProductScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
 });

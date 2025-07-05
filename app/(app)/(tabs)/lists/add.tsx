@@ -1,4 +1,5 @@
 import Input from "@/components/Input";
+import { useAuth } from "@/context/AuthContext";
 import { auth, db } from "@/firebase/FirebaseConfig";
 import { Stack, useRouter } from "expo-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -27,7 +28,7 @@ const AddList = () => {
     items: [],
   });
   const router = useRouter();
-  const user = auth.currentUser;
+  const { user } = useAuth();
 
   const handleAddList = async () => {
     if (!listName.trim()) {
@@ -38,8 +39,9 @@ const AddList = () => {
     setIsLoading(true);
     setListInfo((prevValue) => ({ ...prevValue, listName }));
     try {
-      if (!user) {
+      if (!user || !auth.currentUser) {
         router.replace("/login");
+        return null;
       }
 
       const data = await addDoc(collection(db, `users/${user?.uid}/lists`), {
@@ -112,9 +114,9 @@ const AddList = () => {
         <TouchableOpacity
           disabled={isLoading}
           onPress={handleAddList}
-          style={styles.button}
+          style={styles.saveBtn}
         >
-          <Text style={styles.buttonText}>Save List</Text>
+          <Text style={styles.saveBtnText}>Save List</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -126,7 +128,7 @@ export default AddList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     backgroundColor: "#fff",
   },
   label: {
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
   loading: {
     marginTop: 10,
   },
-  button: {
+  saveBtn: {
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
@@ -153,8 +155,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.2)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
-  buttonText: {
+  saveBtnText: {
     fontWeight: "bold",
   },
 });

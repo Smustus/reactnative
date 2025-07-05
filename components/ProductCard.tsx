@@ -62,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     >
       <View style={styles.infoContainer}>
         <View style={styles.infoBlock}>
-          <Text style={styles.label}>Product</Text>
+          <Text style={styles.label}>Name</Text>
           <Text style={[styles.value, isFinished && styles.strikethrough]}>
             {item.name}
           </Text>
@@ -121,6 +121,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   finishedCard: {
     opacity: 0.6,
@@ -156,10 +161,15 @@ const styles = StyleSheet.create({
   editBtn: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#0099ff",
+    backgroundColor: "#007AFF",
     maxHeight: 50,
     padding: 10,
     borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   deleteBtn: {
     justifyContent: "center",
@@ -169,5 +179,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 12,
     marginLeft: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
 });

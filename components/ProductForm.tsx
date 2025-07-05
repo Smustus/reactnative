@@ -109,8 +109,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
         onChangeText={setPrice}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>
+      <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit}>
+        <Text style={styles.saveBtnText}>
           {productToEdit ? "Save Change" : "Save to List"}
         </Text>
       </TouchableOpacity>
@@ -126,14 +126,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
   },
-  button: {
-    backgroundColor: "dodgerblue",
+  saveBtn: {
+    backgroundColor: "#007AFF",
     padding: 12,
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
-  buttonText: {
+  saveBtnText: {
     color: "white",
     fontWeight: "bold",
   },
