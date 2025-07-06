@@ -32,8 +32,6 @@ export default {
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
-      googleServicesFile:
-        "$GOOGLE_SERVICES_JSON_BASE64" ?? "./google-services.json",
       package: "com.anonymous.reactnative",
       runtimeVersion: "1.0.0",
     },
@@ -53,7 +51,14 @@ export default {
           backgroundColor: "#ffffff",
         },
       ],
-      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          android: {
+            googleServicesFile: "$GOOGLE_SERVICES_JSON_BASE64",
+          },
+        },
+      ],
     ],
     experiments: {
       typedRoutes: true,
