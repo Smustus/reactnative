@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 16.13.4",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "GOOGLE_SERVICES_JSON_BASE64": {
+          "EAS_SECRET": "GOOGLE_SERVICES_JSON_BASE64"
+        }
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "GOOGLE_SERVICES_JSON_BASE64": {
+          "EAS_SECRET": "GOOGLE_SERVICES_JSON_BASE64"
+        }
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "GOOGLE_SERVICES_JSON_BASE64": {
+          "EAS_SECRET": "GOOGLE_SERVICES_JSON_BASE64"
+        }
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

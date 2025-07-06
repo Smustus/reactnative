@@ -15,7 +15,7 @@ function RootLayoutContent() {
   const { user, initializing } = useAuth();
 
   if (initializing) {
-    return <ActivityIndicator />;
+    return <ActivityIndicator size={"large"} />;
   }
 
   const isAuthenticated = !!user; // true if user object exists, false otherwise
