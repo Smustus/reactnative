@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     paddingVertical: Platform.OS === "ios" ? 10 : 0, // Adjust padding for iOS/Android
+    outline: "none",
   },
   leftIcon: {
     marginRight: 10,
