@@ -4,7 +4,7 @@ const IS_PREVIEW = process.env.APP_VARIANT === "preview";
 export default ({ config }) => ({
   ...config,
 
-  name: "Shopping App", //getAppName()
+  name: getAppName(), //getAppName() "Shopping App"
   slug: "reactnative",
   version: "1.0.0",
   runtimeVersion: {
@@ -22,7 +22,7 @@ export default ({ config }) => ({
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.anonymous.reactnative", //getUniqueIdentifier()
+    bundleIdentifier: getUniqueIdentifier(), //getUniqueIdentifier()
     runtimeVersion: {
       policy: "appVersion",
     },
@@ -36,7 +36,7 @@ export default ({ config }) => ({
       backgroundColor: "#ffffff",
     },
     edgeToEdgeEnabled: true,
-    package: "com.anonymous.reactnative", //getUniqueIdentifier()
+    package: getUniqueIdentifier(), //getUniqueIdentifier()
     runtimeVersion: "1.0.0",
   },
   web: {
@@ -82,11 +82,11 @@ export default ({ config }) => ({
 
 const getUniqueIdentifier = () => {
   if (IS_DEV) {
-    return "com.yourname.stickersmash.dev";
+    return "com.anonymous.reactnative.dev";
   }
 
   if (IS_PREVIEW) {
-    return "com.yourname.stickersmash.preview";
+    return "com.anonymous.reactnative.preview";
   }
 
   return "com.anonymous.reactnative";
