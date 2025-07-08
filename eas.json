@@ -8,13 +8,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "APP_VARIANT": "development",
-        "EXPO_PUBLIC_API_KEY": "AIzaSyB68P-5JBSL62eELai5KGAElBQdebeKAnE",
-        "EXPO_PUBLIC_AUTH_DOMAIN": "shoppinglistapp-e16e9.firebaseapp.com",
-        "EXPO_PUBLIC_PROJECT_ID": "shoppinglistapp-e16e9",
-        "EXPO_PUBLIC_STORAGE_BUCKET": "shoppinglistapp-e16e9.firebasestorage.app",
-        "EXPO_PUBLIC_MESSAGING_SENDER_ID": "162197180925",
-        "EXPO_PUBLIC_APP_ID": "1:162197180925:web:584fc748f6d499b256c994"
+        "APP_VARIANT": "development"
       },
       "channel": "development"
     },
